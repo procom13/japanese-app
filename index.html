@@ -59,16 +59,13 @@ h1{font-size:24px;margin:0;line-height:1.25}
     <h1>일본어 학습지</h1>
     <p class="sub">하루 15분 · 히라가나부터 J-pop까지</p>
   </div>
-  <div id="list"></div>
+  <div id="list"><p class="sub">목록을 불러오는 중…</p></div>
   <p class="foot" id="credit">음성: VOICEVOX:春日部つむぎ · 冥鳴ひまり · もち子さん · 青山龍星</p>
 </main>
 <script>
 (function(){
-  var DAYS=[
-    {n:1,href:'day1.html',title:'히라가나 あ행 · か행',kana:'あいうえお かきくけこ',desc:'첫 10글자'},
-    {n:2,href:'day2.html',title:'히라가나 さ행 · た행',kana:'さしすせそ たちつてと',desc:'Day 1 복습 퀴즈 포함'}
-  ];
-  var NEXT={n:3,title:'히라가나 な행 · は행',kana:'なにぬねの はひふへほ',desc:'준비 중'};
+  function draw(data){
+  var DAYS=data.days,NEXT=data.next;
   var last=DAYS[DAYS.length-1].n;
   function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
   var html=DAYS.slice().reverse().map(function(d){
@@ -84,6 +81,11 @@ h1{font-size:24px;margin:0;line-height:1.25}
     '<span class="info"><strong>'+esc(NEXT.title)+'</strong><span class="kana" lang="ja">'+esc(NEXT.kana)+'</span><small>'+esc(NEXT.desc)+'</small></span><span></span></div>'+
     html+'</div>';
   document.getElementById('list').innerHTML=html;
+  }
+  // Day 목록은 days.json 에서 매번 새로 받아요 (브라우저에 저장된 예전 목록을 쓰지 않도록)
+  fetch('days.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(draw).catch(function(){
+    document.getElementById('list').innerHTML='<p class="sub">목록을 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.</p>';
+  });
 })();
 </script>
 </body>
