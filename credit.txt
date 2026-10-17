@@ -1,0 +1,4 @@
+VOICEVOX:春日部つむぎ
+VOICEVOX:冥鳴ひまり
+VOICEVOX:もち子さん
+VOICEVOX:青山龍星

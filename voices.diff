@@ -1,0 +1,88 @@
+--- index.html (이전)
++++ index.html
+@@ -225,7 +225,7 @@
+   </header>
+   <main id="stage"></main>
+   <footer id="dock"></footer>
+-  <div class="voicebar"><span id="voiceName">음성: 확인 중…</span><span class="credit">VOICEVOX:春日部つむぎ</span><button type="button" class="chip" data-act="voice-open">⚙️ 음성 설정</button></div>
++  <div class="voicebar"><span id="voiceName">음성: 확인 중…</span><span class="credit" id="credit">VOICEVOX</span><button type="button" class="chip" data-act="voice-open">⚙️ 음성 설정</button></div>
+ </div>
+ <div id="toast" role="status" aria-live="polite"></div>
+ <div class="sheet" id="sheet" hidden>
+@@ -239,7 +239,9 @@
+       <option value="tts">기기 음성 엔진 (Kyoko 등)</option>
+     </select>
+     <p class="muted">VOICEVOX로 미리 만든 mp3라 기기와 상관없이 똑같이 들려요. 음원에 없는 단어만 기기 음성으로 읽어요. 아래 설정은 기기 음성 엔진을 쓸 때만 적용돼요.</p>
+-    <label for="voiceSel">일본어 음성 선택</label>
++    <label for="vvSel">VOICEVOX 목소리</label>
++    <select id="vvSel"><option>불러오는 중…</option></select>
++    <label for="voiceSel">기기 음성 선택 (Kyoko 등)</label>
+     <select id="voiceSel"></select>
+     <button type="button" class="btn" id="padBtn" data-act="toggle-pad" aria-pressed="true">앞부분 잘림 보정: 켜짐</button>
+     <p class="muted">켜면 소리 앞에 무음을 넣어 첫 소리가 잘리는 걸 막아요.</p>
+@@ -325,15 +327,44 @@
+ function toast(msg){var t=$('#toast');t.textContent=msg;t.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove('on')},2800)}
+ 
+ /* ---------- VOICEVOX audio (manifest.json) ---------- */
+-var VOICE_CREDIT='VOICEVOX:春日部つむぎ';
+-var MANIFEST={},MANIFEST_STATE='loading';
++var VOICES=[],VOICE_ID=null,VOICE_CREDIT='VOICEVOX';
++var MANIFESTS={},MANIFEST={},MANIFEST_STATE='loading';
++try{var sv=localStorage.getItem('jp-vv');if(sv){VOICE_ID=parseInt(sv,10)}}catch(e){}
++function getJSON(url){
++  return fetch(url,{cache:'no-cache'}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()});
++}
++function applyVoice(id){
++  var v=null;
++  for(var i=0;i<VOICES.length;i++){if(VOICES[i].id===id&&MANIFESTS[id]){v=VOICES[i]}}
++  if(!v){for(var j=0;j<VOICES.length;j++){if(MANIFESTS[VOICES[j].id]){v=VOICES[j];break}}}
++  if(!v){MANIFEST={};MANIFEST_STATE='fail';updateVoiceUI();return}
++  VOICE_ID=v.id;VOICE_CREDIT=v.credit||('VOICEVOX:'+v.name);
++  MANIFEST=MANIFESTS[v.id];MANIFEST_STATE='ok';
++  var c=$('#credit');if(c){c.textContent=VOICE_CREDIT}
++  updateVoiceUI();
++}
++function fillVoiceSel(){
++  var s=$('#vvSel');
++  if(!s)return;
++  s.innerHTML=VOICES.filter(function(v){return MANIFESTS[v.id]}).map(function(v){
++    return '<option value="'+v.id+'">'+esc(v.name)+(v.label?' · '+esc(v.label):'')+'</option>';
++  }).join('');
++  s.value=String(VOICE_ID);
++  s.disabled=s.options.length<2;
++}
+ function loadManifest(){
+-  if(!window.fetch){MANIFEST_STATE='fail';return}
+-  fetch('manifest.json',{cache:'no-cache'}).then(function(r){
+-    if(!r.ok)throw new Error('HTTP '+r.status);
+-    return r.json();
+-  }).then(function(m){
+-    MANIFEST=m||{};MANIFEST_STATE='ok';updateVoiceUI();
++  if(!window.fetch){MANIFEST_STATE='fail';updateVoiceUI();return}
++  getJSON('voices.json').then(function(list){
++    VOICES=list||[];
++    return Promise.all(VOICES.map(function(v){
++      return getJSON(v.manifest).then(function(m){MANIFESTS[v.id]=m}).catch(function(){});
++    }));
++  }).catch(function(){
++    // voices.json 이 없으면 예전 방식(manifest.json 하나)으로
++    VOICES=[{id:8,name:'春日部つむぎ',credit:'VOICEVOX:春日部つむぎ',manifest:'manifest.json'}];
++    return getJSON('manifest.json').then(function(m){MANIFESTS[8]=m});
++  }).then(function(){
++    applyVoice(VOICE_ID);fillVoiceSel();
+   }).catch(function(){MANIFEST_STATE='fail';updateVoiceUI()});
+ }
+ var AUD=null;
+@@ -509,6 +540,12 @@
+   if((TTS.src!=='clip'||MANIFEST_STATE==='fail')&&TTS.loaded&&!TTS.hasJa&&!TTS.warned){TTS.warned=true;toast('일본어 음성이 없어요. 화면 위 안내를 확인해 주세요')}
+ }
+ function initVoiceUI(){
++  $('#vvSel').addEventListener('change',function(){
++    var id=parseInt(this.value,10);
++    try{localStorage.setItem('jp-vv',String(id))}catch(e){}
++    applyVoice(id);
++    if(TTS.src==='clip'){speak('あ',0.8)}
++  });
+   var srs=$('#srcSel');
+   srs.value=TTS.src;
+   srs.addEventListener('change',function(){

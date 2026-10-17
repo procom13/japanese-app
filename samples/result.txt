@@ -1,0 +1,20 @@
+VOICEVOX engine version: 0.25.2
+speakers: 43명, 스타일 127개
+
+후보 목록 (번호 / 캐릭터 / 스타일 / speaker id)
+1. 冥鳴ひまり / ノーマル / id=14
+     あ      -> samples\1_id14_a.wav
+     ありがとう  -> samples\1_id14_arigatou.wav
+     こころ    -> samples\1_id14_kokoro.wav
+2. 春日部つむぎ / ノーマル / id=8
+     あ      -> samples\2_id8_a.wav
+     ありがとう  -> samples\2_id8_arigatou.wav
+     こころ    -> samples\2_id8_kokoro.wav
+3. もち子さん / ノーマル / id=20
+     あ      -> samples\3_id20_a.wav
+     ありがとう  -> samples\3_id20_arigatou.wav
+     こころ    -> samples\3_id20_kokoro.wav
+4. 青山龍星 / ノーマル / id=13
+     あ      -> samples\4_id13_a.wav
+     ありがとう  -> samples\4_id13_arigatou.wav
+     こころ    -> samples\4_id13_kokoro.wav

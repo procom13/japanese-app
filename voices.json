@@ -1,0 +1,34 @@
+[
+ {
+  "id": 8,
+  "name": "春日部つむぎ",
+  "style": "ノーマル",
+  "label": "밝고 또렷한 여성",
+  "manifest": "audio/v8/manifest.json",
+  "credit": "VOICEVOX:春日部つむぎ"
+ },
+ {
+  "id": 14,
+  "name": "冥鳴ひまり",
+  "style": "ノーマル",
+  "label": "낮고 차분한 여성",
+  "manifest": "audio/v14/manifest.json",
+  "credit": "VOICEVOX:冥鳴ひまり"
+ },
+ {
+  "id": 20,
+  "name": "もち子さん",
+  "style": "ノーマル",
+  "label": "부드러운 여성",
+  "manifest": "audio/v20/manifest.json",
+  "credit": "VOICEVOX:もち子さん"
+ },
+ {
+  "id": 13,
+  "name": "青山龍星",
+  "style": "ノーマル",
+  "label": "낮고 차분한 남성",
+  "manifest": "audio/v13/manifest.json",
+  "credit": "VOICEVOX:青山龍星"
+ }
+]
