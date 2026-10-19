@@ -724,7 +724,7 @@ function renderLearn(){
   var note=t.note?'<p class="note">'+esc(t.note)+'</p>':'';
   $('#stage').innerHTML=
     '<div class="card-wrap">'+
-    '<div class="card-meta"><span lang="ja">'+t.row+' · '+t.pos+'/5</span><span>'+(S.card+1)+' / '+LEARN_N+'</span></div>'+
+    '<div class="card-meta"><span lang="ja">'+t.row+' · '+t.pos+'/'+CHARS.slice(0,LEARN_N).filter(function(c){return c.row===t.row}).length+'</span><span>'+(S.card+1)+' / '+LEARN_N+'</span></div>'+
     '<div class="flip'+(S.flipped?' is-back':'')+'" id="flip" data-act="flip" role="button" tabindex="0" aria-label="카드 뒤집기">'+
       '<div class="flip-in">'+
         '<div class="face front"><div class="tile"><span class="big" lang="ja">'+t.c+'</span></div>'+
